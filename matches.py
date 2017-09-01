@@ -4,6 +4,12 @@ Array with three fields 1st is key sign, 2nd is sign that we could
 get after get out match, the 3rd one for possible sign after putting
 extra match and finally 4th value for changing position of a single match.
 '''
+from random import choice
+from string import digits
+from itertools import product
+
+math_signs = '=+-'
+
 SINGNS = {}
 SINGNS['=']=[['='],['-'],[]] 
 SINGNS['-']=[['-'],[],['+','=']]
@@ -47,7 +53,7 @@ def solve(equation):
             for t_digit in range(4):
                 for f_sign in range(3):
                     for s_sign in range(3):
-                        if f_digit + f_sign + s_digit + s_sign + t_sign == 3:
+                        if f_digit + f_sign + s_digit + s_sign + t_digit == 3:
                             result=check(f_digit, s_digit, t_digit, f_sign, s_sign,  equation)
                             if result:
                                 return result
@@ -57,7 +63,14 @@ def solve(equation):
 def print_solution(equation):
     solution = solve(equation)
     if solution:    
-        print equation+' solution: '+solution
+        print(equation+' solution: '+solution)
     else:
-       print 'Can\'t find solution for '+equation
+       print('Can\'t find solution for '+equation)
 
+def generate_equations():
+    with open("examples.tsv", 'w') as f:
+        for i in product(digits,["+","-"],digits,["="],digits):
+            f.write(''.join(i)+'\t' if(solve(''.join(i)+'\t')!=0) else '')
+
+if __name__ == '__main__':
+    generate_equations()
