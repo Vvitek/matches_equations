@@ -1,17 +1,17 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, flash
 from random import choice
-from matches import check, solve
+from matches import check, solve, ALL_EQUATIONS
 app = Flask(__name__)
+app.secret_key = "Strong enough"
 
 @app.route('/home', methods = ['POST', 'GET'])
 
 def show_page():
-    equation = equation if 'equation'in locals() else choice(open('examples.tsv', 'r').read().split('\t'))
     if request.method == 'POST':
-        solution = request.form['solution']
-        return "Correct" if(solve(equation)==solution) else solve(equation) 
+        return("Correct" if(solve(session.get('equation'))==request.form['solution']) else "Incorrect") 
     else:
-        return render_template("home.html", equation = equation)
+        session['equation'] = choice(ALL_EQUATIONS)
+        return render_template("home.html", equation = session.get('equation'))
 
 if __name__ == "__main__":
     app.run(debug = True)

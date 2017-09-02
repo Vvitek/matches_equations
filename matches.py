@@ -67,10 +67,12 @@ def print_solution(equation):
     else:
        print('Can\'t find solution for '+equation)
 
-def generate_equations():
+def generate_equations2():
     with open("examples.tsv", 'w') as f:
         for i in product(digits,["+","-"],digits,["="],digits):
             f.write(''.join(i)+'\t' if(solve(''.join(i)+'\t')!=0) else '')
+
+ALL_EQUATIONS = [''.join(i) for i in product(digits,["+","-"],digits,["="],digits) if solve(''.join(i))]
 
 if __name__ == '__main__':
     generate_equations()
