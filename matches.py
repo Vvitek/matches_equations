@@ -10,31 +10,54 @@ from itertools import product
 
 math_signs = '=+-'
 
-SINGNS = {}
-SINGNS['=']=[['='],['-'],[]] 
-SINGNS['-']=[['-'],[],['+','=']]
-SINGNS['+']=[['+'],['-'],[]]
-SINGNS['0']=[['0'],[],['8'],['6','9']]
-SINGNS['1']=[['1'],[],['7']]
-SINGNS['2']=[['2'],[],[],['3']]
-SINGNS['3']=[['3'],[],['9'],['2','5'],]
-SINGNS['4']=[['4'],[],[],[]]
-SINGNS['5']=[['5'],[],['6','9'],['3']]
-SINGNS['6']=[['6'],['5'],['8'],['0','9']]
-SINGNS['7']=[['7'],['1'],[],[]]
-SINGNS['8']=[['8'],['0','6','9'],[],[]]
-SINGNS['9']=[['9'],['3','5'],['8'],['0','6']]
+SIGNS2 = {}
+SIGNS2['='] = [0]*8+[1]*2
+SIGNS2['-'] = [0]*6+[1]+[0]*3
+SIGNS2['+'] = [0]*6+[1]*2+[0]
+SIGNS2['1'] = [0]*2+[1]*2+[0]*6
+SIGNS2['2'] = [0,1,1]*2+[1]+[0]*3
+SIGNS2['3'] = [0]+[1]*4+[0,1]+[0]*3
+SIGNS2['4'] = [1,0,1,1,0,0,1]+[0]*3
+SIGNS2['5'] = [1,1,0]*2+[1]+[0]*3
+SIGNS2['6'] = [1,1,0]+[1]*4+[0]*3
+SIGNS2['7'] = [0]+[1]*3+[0]*6
+SIGNS2['8'] = [1]*7+[0]*3
+SIGNS2['9'] = [1]*5+[0,1]+[0]*3
+
+SIGNS = {}
+SIGNS['=']=[['='],['-'],[]] 
+SIGNS['-']=[['-'],[],['+','=']]
+SIGNS['+']=[['+'],['-'],[]]
+SIGNS['0']=[['0'],[],['8'],['6','9']]
+SIGNS['1']=[['1'],[],['7']]
+SIGNS['2']=[['2'],[],[],['3']]
+SIGNS['3']=[['3'],[],['9'],['2','5'],]
+SIGNS['4']=[['4'],[],[],[]]
+SIGNS['5']=[['5'],[],['6','9'],['3']]
+SIGNS['6']=[['6'],['5'],['8'],['0','9']]
+SIGNS['7']=[['7'],['1'],[],[]]
+SIGNS['8']=[['8'],['0','6','9'],[],[]]
+SIGNS['9']=[['9'],['3','5'],['8'],['0','6']]
     
+def new_check(e):
+    signs = [SIGNS2[i] for i in e]
+    for i in range(10):
+        if (e[3]=='=' and ((l=='+' and int(i)+int(j)==int(k))
+                   or (l=='-' and int(i)-int(j)==int(k)))) \
+                   or (l=='=' and ((m=='+' and int(i)==int(j)+int(k)) \
+                   or (e[3]=='-' and int(i)==int(j)-int(k)))) :
+                       return i+l+j+m+k;
+
 def check(f_digit, s_digit, t_digit, f_sign, s_sign,  equation):
     '''
     Check if current equation is correct
     '''
     try:
-        for i in SINGNS[equation[0]][f_digit]:
-            for j in SINGNS[equation[2]][s_digit]:
-                for k in SINGNS[equation[4]][t_digit]:
-                    for l in SINGNS[equation[1]][f_sign]:
-                        for m in SINGNS[equation[3]][s_sign]:
+        for i in SIGNS[equation[0]][f_digit]:
+            for j in SIGNS[equation[2]][s_digit]:
+                for k in SIGNS[equation[4]][t_digit]:
+                    for l in SIGNS[equation[1]][f_sign]:
+                        for m in SIGNS[equation[3]][s_sign]:
                             if (m=='=' and ((l=='+' and int(i)+int(j)==int(k))
                                         or (l=='-' and int(i)-int(j)==int(k)))) \
                                         or (l=='=' and ((m=='+' and int(i)==int(j)+int(k)) \
