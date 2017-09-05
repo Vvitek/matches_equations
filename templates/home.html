@@ -1,11 +1,10 @@
-<html>
+﻿<html>
 	<head>
 	<script>
 var selectedElement = 0;
 var currentX = 0;
 var currentY = 0;
 var currentMatrix = 0;
-
 function moveElement(evt) {
 	dx = evt.clientX - currentX;
 	dy = evt.clientY - currentY;
@@ -17,7 +16,6 @@ function moveElement(evt) {
 	currentX = evt.clientX;
 	currentY = evt.clientY;
 }
-
 function deselectElement(evt) {
 	if(selectedElement != 0) {
 		selectedElement.removeAttributeNS(null, "onmousemove");
@@ -26,40 +24,60 @@ function deselectElement(evt) {
 		selectedElement = 0;
 	}
 }
-
-
 function selectElement(evt) {
 	selectedElement = evt.target;
 	currentX = evt.clientX;
 	currentY = evt.clientY;
 	currentMatrix = selectedElement.getAttributeNS(null, "transform").slice(7,-1).split(' ');
-
 	for(var i=0;i<currentMatrix.length;i++){
 		currentMatrix[i] = parseFloat(currentMatrix[i]);
 	}
-
 	selectedElement.setAttributeNS(null, "onmousemove", "moveElement(evt)");
-	selectedElement.setAttributeNS(null, "onmouseout", "deselectElement(evt)");
+	//selectedElement.setAttributeNS(null, "onmouseout", "deselectElement(evt)");
 	selectedElement.setAttributeNS(null, "onmouseup", "deselectElement(evt)");
 }
 
 function drawMatches(equation) {
-	const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,200,1],[10,100,0],[0,100,1],[50,50,0],[40,0,1],[60,0,1]];
-	var SIGNS = new Hash('=', [0,0,0,0,0,0,0,0,1,1],
-			     '-', [0,0,0,0,0,0,1,0,0,0],
-			     '+', [0,0,0,0,0,0,1,1,0,0],
-			     '1', [0,0,1,1,0,0,0,0,0,0],
-			     '2', [0,1,1,0,1,1,1,0,0,0],
-			     '3', [0,1,1,1,1,0,1,0,0,0],
-			     '4', [1,0,1,1,0,0,1,0,0,0],
-			     '5', [1,1,0,1,1,0,1,0,0,0],
-			     '6', [1,1,0,1,1,1,1,0,0,0],
-			     '7', [0,1,1,1,0,0,0,0,0,0],
-			     '8', [1,1,1,1,1,1,1,0,0,0],
-			     '9', [1,1,1,1,1,0,1,0,0,0]);
-	for(var i=0;i<=equation.length;i++) {
-		equation[i]
+	const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
+	var SIGNS = {'=': [0,0,0,0,0,0,0,0,1,1],
+			     '-': [0,0,0,0,0,0,1,0,0,0],
+			     '+': [0,0,0,0,0,0,1,1,0,0],
+				 '0': [1,1,1,1,1,1,0,0,0,0],
+			     '1': [0,0,1,1,0,0,0,0,0,0],
+			     '2': [0,1,1,0,1,1,1,0,0,0],
+			     '3': [0,1,1,1,1,0,1,0,0,0],
+			     '4': [1,0,1,1,0,0,1,0,0,0],
+			     '5': [1,1,0,1,1,0,1,0,0,0],
+			     '6': [1,1,0,1,1,1,1,0,0,0],
+			     '7': [0,1,1,1,0,0,0,0,0,0],
+			     '8': [1,1,1,1,1,1,1,0,0,0],
+			     '9': [1,1,1,1,1,0,1,0,0,0]};
+				 
+	for(var i=0;i<equation.length;i++) {
+		for(var j=0;j<10;j++) {
+		  if(SIGNS[equation[i]][j]) {
+		    var temp = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+		    temp.setAttribute("class", "match")
+		    temp.setAttribute("width", coordinates[j][2] ? 100 : 10);
+		    temp.setAttribute("height", coordinates[j][2] ? 10 : 100);
+		    temp.setAttribute("x", coordinates[j][0]+i*120);
+		    temp.setAttribute("y", coordinates[j][1]);
+			temp.setAttribute("onmousedown", "selectElement(evt)");
+			temp.setAttribute("transform", "matrix(1 0 0 1 0 0)");
+		    document.getElementById('field').appendChild(temp);
+		  }
+		  }
+		}
+		
+		}
 	</script>
+	<style>
+	.match {
+	fill: rgb(204,153,0);
+	stroke-width: 1;
+	stroke: rgb(0,0,0);
+	}
+	</style>
 	</head>
 	<body>
 		<p> Equation to solve {{equation}} </p>
@@ -69,12 +87,15 @@ function drawMatches(equation) {
 			<br><br>
 			<input type="submit" value="Submit">
 		</form>
-		<svg width="400" height="200">
-			{% for i in range(5) %}
+		<svg id="field" width="1200" height="250">
+			<!--{% for i in range(5) %}
 			console.log("kukulka"};
 			console.log("coordinates[{{ i }}][0]");
-			<rect onmousedown="selectElement(evt)" width="10" height="100" x="coordinates[{{ i }}][0]" y="coordinates[{{ i }}][1]" transform="matrix(1 0 0 1 0 0)" style="fill:rgb(204,153,0);stroke-width:1;stroke:rgb(0,0,0)" />
-			{% endfor %}
-		</svg>	  
+			<rect onmousedown="selectElement(evt)" width="10" height="100" x="coordinates[0][0]" y="coordinates[0][1]" transform="matrix(1 0 0 1 0 0)" style="fill:rgb(204,153,0);stroke-width:1;stroke:rgb(0,0,0)" />
+			{% endfor %}-->
+		</svg>
+		<script>
+		drawMatches('0+8=9');
+		</script>
 	</body>
 </html>
