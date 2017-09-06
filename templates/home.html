@@ -1,29 +1,48 @@
 ﻿<html>
 	<head>
 	<script>
+const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
 var selectedElement = 0;
 var currentX = 0;
 var currentY = 0;
 var currentMatrix = 0;
+
 function moveElement(evt) {
 	dx = evt.clientX - currentX;
 	dy = evt.clientY - currentY;
-	currentMatrix[4] += dx;
-	currentMatrix[5] += dy;
+	currentMatrix[4] = dx;
+	currentMatrix[5] = dy;
 	newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
-	
 	selectedElement.setAttributeNS(null, "transform", newMatrix);
-	currentX = evt.clientX;
-	currentY = evt.clientY;
+	
+	//currentX = evt.clientX;
+	//currentY = evt.clientY;
 }
+
 function deselectElement(evt) {
 	if(selectedElement != 0) {
+		for(var i=0;i<coordinates.length;i++) {
+			if(Math.abs(coordinates[i][coordinates[i][2]]-evt.clientX)<20 && 
+					Math.abs(coordinates[i][coordinates[i][2]++%2]-evt.clientY)<60) { 
+				alert(Math.abs(coordinates[i][0]-evt.clientX)+Math.abs(coordinates[i][1]-evt.clientY));
+				currentX = coordinates[i][0];
+				currentY = coordinates[i][1];
+				selectedElement.setAttribute("x", coordinates[i][0]);
+				selectedElement.setAttribute("y", coordinates[i][1]);
+				selectedElement.setAttribute("class", "match");
+				selectedElement.setAttribute("width", coordinates[i][2] ? 100 : 10);
+				selectedElement.setAttribute("height", coordinates[i][2] ? 10 : 100);
+				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
+			} else { console.log(Math.abs(coordinates[i][0]-evt.clientX)+Math.abs(coordinates[i][1]-evt.clientY)); }
+		}
+		//alert("dx: " + dx + ", dy: " + dy + ", curX: " + currentX + ", curY: " + currentY);
 		selectedElement.removeAttributeNS(null, "onmousemove");
 		selectedElement.removeAttributeNS(null, "onmouseout");
 		selectedElement.removeAttributeNS(null, "onmouseup");
 		selectedElement = 0;
 	}
 }
+
 function selectElement(evt) {
 	selectedElement = evt.target;
 	currentX = evt.clientX;
@@ -38,11 +57,10 @@ function selectElement(evt) {
 }
 
 function drawMatches(equation) {
-	const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
 	var SIGNS = {'=': [0,0,0,0,0,0,0,0,1,1],
 			     '-': [0,0,0,0,0,0,1,0,0,0],
 			     '+': [0,0,0,0,0,0,1,1,0,0],
-				 '0': [1,1,1,1,1,1,0,0,0,0],
+			     '0': [1,1,1,1,1,1,0,0,0,0],
 			     '1': [0,0,1,1,0,0,0,0,0,0],
 			     '2': [0,1,1,0,1,1,1,0,0,0],
 			     '3': [0,1,1,1,1,0,1,0,0,0],
@@ -62,8 +80,8 @@ function drawMatches(equation) {
 		    temp.setAttribute("height", coordinates[j][2] ? 10 : 100);
 		    temp.setAttribute("x", coordinates[j][0]+i*120);
 		    temp.setAttribute("y", coordinates[j][1]);
-			temp.setAttribute("onmousedown", "selectElement(evt)");
-			temp.setAttribute("transform", "matrix(1 0 0 1 0 0)");
+		    temp.setAttribute("onmousedown", "selectElement(evt)");
+		    temp.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 		    document.getElementById('field').appendChild(temp);
 		  }
 		  }
@@ -87,15 +105,9 @@ function drawMatches(equation) {
 			<br><br>
 			<input type="submit" value="Submit">
 		</form>
-		<svg id="field" width="1200" height="250">
-			<!--{% for i in range(5) %}
-			console.log("kukulka"};
-			console.log("coordinates[{{ i }}][0]");
-			<rect onmousedown="selectElement(evt)" width="10" height="100" x="coordinates[0][0]" y="coordinates[0][1]" transform="matrix(1 0 0 1 0 0)" style="fill:rgb(204,153,0);stroke-width:1;stroke:rgb(0,0,0)" />
-			{% endfor %}-->
-		</svg>
+		<svg id="field" width="1200" height="450"></svg>
 		<script>
-		drawMatches('0+8=9');
+drawMatches('{{equation}}');
 		</script>
 	</body>
 </html>

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, session, flash
 from random import choice
-from matches import check, solve, ALL_EQUATIONS, COORDINATES, SIGNS2
+from matches import check, solve, ALL_EQUATIONS#, COORDINATES, SIGNS2
 app = Flask(__name__)
 app.secret_key = "Strong enough"
 
