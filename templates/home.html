@@ -14,28 +14,30 @@ function moveElement(evt) {
 	currentMatrix[5] = dy;
 	newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
 	selectedElement.setAttributeNS(null, "transform", newMatrix);
-	
-	//currentX = evt.clientX;
-	//currentY = evt.clientY;
 }
 
 function deselectElement(evt) {
 	if(selectedElement != 0) {
+		var index = -1;
+		var smallest = 100;
 		for(var i=0;i<coordinates.length;i++) {
-			if(Math.abs(coordinates[i][coordinates[i][2]]-evt.clientX)<20 && 
-					Math.abs(coordinates[i][coordinates[i][2]++%2]-evt.clientY)<60) { 
-				alert(Math.abs(coordinates[i][0]-evt.clientX)+Math.abs(coordinates[i][1]-evt.clientY));
-				currentX = coordinates[i][0];
-				currentY = coordinates[i][1];
-				selectedElement.setAttribute("x", coordinates[i][0]);
-				selectedElement.setAttribute("y", coordinates[i][1]);
-				selectedElement.setAttribute("class", "match");
-				selectedElement.setAttribute("width", coordinates[i][2] ? 100 : 10);
-				selectedElement.setAttribute("height", coordinates[i][2] ? 10 : 100);
-				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-			} else { console.log(Math.abs(coordinates[i][0]-evt.clientX)+Math.abs(coordinates[i][1]-evt.clientY)); }
+			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest) { 
+				console.log("x"+Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150));
+				index = i;
+				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
+				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");*/
+			} else { console.log(evt.clientX + " ### " + evt.clientY + " ### " + 
+			Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150)); 
 		}
-		//alert("dx: " + dx + ", dy: " + dy + ", curX: " + currentX + ", curY: " + currentY);
+			if(index>=0) {
+				selectedElement.setAttribute("x", coordinates[index][0]);
+				selectedElement.setAttribute("y", coordinates[index][1]);
+				selectedElement.setAttribute("class", "match");
+				selectedElement.setAttribute("width", coordinates[index][2] ? 100 : 10);
+				selectedElement.setAttribute("height", coordinates[index][2] ? 10 : 100);
+			}
+				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
+		}
 		selectedElement.removeAttributeNS(null, "onmousemove");
 		selectedElement.removeAttributeNS(null, "onmouseout");
 		selectedElement.removeAttributeNS(null, "onmouseup");
