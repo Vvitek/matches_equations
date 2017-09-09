@@ -25,10 +25,15 @@ function deselectElement(evt) {
 				console.log("x"+Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150));
 				index = i;
 				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
-				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");*/
+				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			} else { console.log(evt.clientX + " ### " + evt.clientY + " ### " + 
 			Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150)); 
 		}
+			selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
+			selectedElement.removeAttributeNS(null, "onmousemove");
+			selectedElement.removeAttributeNS(null, "onmouseout");
+			selectedElement.removeAttributeNS(null, "onmouseup");
+			selectedElement = 0;
 			if(index>=0) {
 				selectedElement.setAttribute("x", coordinates[index][0]);
 				selectedElement.setAttribute("y", coordinates[index][1]);
@@ -36,12 +41,7 @@ function deselectElement(evt) {
 				selectedElement.setAttribute("width", coordinates[index][2] ? 100 : 10);
 				selectedElement.setAttribute("height", coordinates[index][2] ? 10 : 100);
 			}
-				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 		}
-		selectedElement.removeAttributeNS(null, "onmousemove");
-		selectedElement.removeAttributeNS(null, "onmouseout");
-		selectedElement.removeAttributeNS(null, "onmouseup");
-		selectedElement = 0;
 	}
 }
 
@@ -59,7 +59,7 @@ function selectElement(evt) {
 }
 
 function drawMatches(equation) {
-	var SIGNS = {'=': [0,0,0,0,0,0,0,0,1,1],
+	const SIGNS = {'=': [0,0,0,0,0,0,0,0,1,1],
 			     '-': [0,0,0,0,0,0,1,0,0,0],
 			     '+': [0,0,0,0,0,0,1,1,0,0],
 			     '0': [1,1,1,1,1,1,0,0,0,0],

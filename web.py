@@ -8,6 +8,7 @@ app.secret_key = "Strong enough"
 
 def show_page():
     if request.method == 'POST':
+        jsdata = request.form['javascript_data']
         return("Correct" if(solve(session.get('equation'))==request.form['solution']) else "Incorrect") 
     else:
         session['equation'] = choice(ALL_EQUATIONS)
