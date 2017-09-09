@@ -28,8 +28,8 @@ function deselectElement(evt) {
 				EQUATION[Math.floor(evt.clientX/130)][i]=1;
 				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
 				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-			} else { console.log(evt.clientX + " ### " + evt.clientY + " ### " + 
-			Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX%130) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150)); 
+			} else if(selectedElement.getAttribute("x") == coordinates[i][0] && selectedElement.getAttribute("y") == coordinates[i][1]) {
+			EQUATION[Math.floor(selectedElement.getAttribute("x")/130)][i] = 0;
 		}
 			selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			selectedElement.removeAttributeNS(null, "onmousemove");
@@ -54,11 +54,6 @@ function selectElement(evt) {
 	currentY = evt.clientY;
 	console.log(selectedElement.getAttribute("x"));
 	console.log(selectedElement.getAttribute("y"));
-	for(var i=0;i<10;i++) {
-		if(selectedElement.getAttribute("x") == coordinates[i][0] && selectedElement.getAttribute("y") == coordinates[i][1]) {
-			EQUATION[Math.floor(selectedElement.getAttribute("x")/130)][i] = 0;
-		}
-	}
 	currentMatrix = selectedElement.getAttributeNS(null, "transform").slice(7,-1).split(' ');
 	for(var i=0;i<currentMatrix.length;i++){
 		currentMatrix[i] = parseFloat(currentMatrix[i]);
