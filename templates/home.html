@@ -6,6 +6,7 @@ var selectedElement = 0;
 var currentX = 0;
 var currentY = 0;
 var currentMatrix = 0;
+var EQUATION = [];
 
 function moveElement(evt) {
 	dx = evt.clientX - currentX;
@@ -21,34 +22,43 @@ function deselectElement(evt) {
 		var index = -1;
 		var smallest = 100;
 		for(var i=0;i<coordinates.length;i++) {
-			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest) { 
-				console.log("x"+Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150));
+			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest) { 
+				console.log("x"+Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX%130) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150));
 				index = i;
-				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
+				EQUATION[Math.floor(evt.clientX/130)][i]=1;
+				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
 				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			} else { console.log(evt.clientX + " ### " + evt.clientY + " ### " + 
-			Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150)); 
+			Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX%130) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150)); 
 		}
 			selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			selectedElement.removeAttributeNS(null, "onmousemove");
 			selectedElement.removeAttributeNS(null, "onmouseout");
 			selectedElement.removeAttributeNS(null, "onmouseup");
-			selectedElement = 0;
 			if(index>=0) {
-				selectedElement.setAttribute("x", coordinates[index][0]);
+				selectedElement.setAttribute("x", coordinates[index][0] + 130 * Math.floor(evt.clientX/130));
 				selectedElement.setAttribute("y", coordinates[index][1]);
 				selectedElement.setAttribute("class", "match");
 				selectedElement.setAttribute("width", coordinates[index][2] ? 100 : 10);
 				selectedElement.setAttribute("height", coordinates[index][2] ? 10 : 100);
 			}
 		}
+			selectedElement = 0;
 	}
+	for(i=0;i<5;i++) { console.log(EQUATION[i]); }
 }
 
 function selectElement(evt) {
 	selectedElement = evt.target;
 	currentX = evt.clientX;
 	currentY = evt.clientY;
+	console.log(selectedElement.getAttribute("x"));
+	console.log(selectedElement.getAttribute("y"));
+	for(var i=0;i<10;i++) {
+		if(selectedElement.getAttribute("x") == coordinates[i][0] && selectedElement.getAttribute("y") == coordinates[i][1]) {
+			EQUATION[Math.floor(selectedElement.getAttribute("x")/130)][i] = 0;
+		}
+	}
 	currentMatrix = selectedElement.getAttributeNS(null, "transform").slice(7,-1).split(' ');
 	for(var i=0;i<currentMatrix.length;i++){
 		currentMatrix[i] = parseFloat(currentMatrix[i]);
@@ -74,13 +84,14 @@ function drawMatches(equation) {
 			     '9': [1,1,1,1,1,0,1,0,0,0]};
 				 
 	for(var i=0;i<equation.length;i++) {
+		EQUATION.push(SIGNS[equation[i]]);
 		for(var j=0;j<10;j++) {
 		  if(SIGNS[equation[i]][j]) {
 		    var temp = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
 		    temp.setAttribute("class", "match")
 		    temp.setAttribute("width", coordinates[j][2] ? 100 : 10);
 		    temp.setAttribute("height", coordinates[j][2] ? 10 : 100);
-		    temp.setAttribute("x", coordinates[j][0]+i*120);
+		    temp.setAttribute("x", coordinates[j][0]+i*130);
 		    temp.setAttribute("y", coordinates[j][1]);
 		    temp.setAttribute("onmousedown", "selectElement(evt)");
 		    temp.setAttribute("transform", "matrix(1 0 0 1 0 0)");
@@ -88,7 +99,6 @@ function drawMatches(equation) {
 		  }
 		  }
 		}
-		
 		}
 	</script>
 	<style>
