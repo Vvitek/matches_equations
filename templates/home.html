@@ -2,19 +2,19 @@
 	<head>
 	<script>
 const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
-const SIGNS = {'=': [0,0,0,0,0,0,0,0,1,1],
-			     '-': [0,0,0,0,0,0,1,0,0,0],
-			     '+': [0,0,0,0,0,0,1,1,0,0],
-			     '0': [1,1,1,1,1,1,0,0,0,0],
-			     '1': [0,0,1,1,0,0,0,0,0,0],
-			     '2': [0,1,1,0,1,1,1,0,0,0],
-			     '3': [0,1,1,1,1,0,1,0,0,0],
-			     '4': [1,0,1,1,0,0,1,0,0,0],
-			     '5': [1,1,0,1,1,0,1,0,0,0],
-			     '6': [1,1,0,1,1,1,1,0,0,0],
-			     '7': [0,1,1,1,0,0,0,0,0,0],
-			     '8': [1,1,1,1,1,1,1,0,0,0],
-			     '9': [1,1,1,1,1,0,1,0,0,0]};
+const SIGNS = {      '0': [1,1,1,1,1,1,0,0,0,0],
+		     '1': [0,0,1,1,0,0,0,0,0,0],
+		     '2': [0,1,1,0,1,1,1,0,0,0],
+		     '3': [0,1,1,1,1,0,1,0,0,0],
+		     '4': [1,0,1,1,0,0,1,0,0,0],
+		     '5': [1,1,0,1,1,0,1,0,0,0],
+		     '6': [1,1,0,1,1,1,1,0,0,0],
+		     '7': [0,1,1,1,0,0,0,0,0,0],
+		     '8': [1,1,1,1,1,1,1,0,0,0],
+		     '9': [1,1,1,1,1,0,1,0,0,0],
+		     '-': [0,0,0,0,0,0,1,0,0,0],
+		     '+': [0,0,0,0,0,0,1,1,0,0],
+		     '=': [0,0,0,0,0,0,0,0,1,1]};
 var selectedElement = 0;
 var currentX = 0;
 var currentY = 0;
@@ -22,10 +22,8 @@ var currentMatrix = 0;
 var EQUATION = [];
 
 function moveElement(evt) {
-	dx = evt.clientX - currentX;
-	dy = evt.clientY - currentY;
-	currentMatrix[4] = dx;
-	currentMatrix[5] = dy;
+	currentMatrix[4] = evt.clientX - currentX;
+	currentMatrix[5] = evt.clientY - currentY;
 	newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
 	selectedElement.setAttributeNS(null, "transform", newMatrix);
 }
@@ -33,20 +31,22 @@ function moveElement(evt) {
 function deselectElement(evt) {
 	var solution = "";
 	if(selectedElement != 0) {
+		var position = Math.floor(evt.clientX/130);
 		var index = -1;
-		var smallest = 100;
-		for(var i=0;i<coordinates.length;i++) {
-			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest) { 
-				//console.log("x"+Math.abs(coordinates[i][0]+(coordinates[i][2] ? 5:50)-evt.clientX%130) + " ### " + Math.abs(coordinates[i][1]+(coordinates[i][2] ? 50:5)-evt.clientY+150));
+		var smallest = 80;
+		var limits =(position%2===0 ? [0,8]:[7,10]);
+		console.log(limits);
+		for(var i=limits[0];i<limits[1];i++) {
+			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest && EQUATION[position][i]===0) { 
 				index = i;
 				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
 				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-			} else if(selectedElement.getAttribute("x") == coordinates[i][0] && selectedElement.getAttribute("y") == coordinates[i][1]) {
+			} else if(selectedElement.getAttribute("x")%130 == coordinates[i][0] && selectedElement.getAttribute("y")%130 == coordinates[i][1]) {
 			EQUATION[Math.floor(selectedElement.getAttribute("x")/130)][i] = 0;
 		}
 			selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			selectedElement.removeAttributeNS(null, "onmousemove");
-			selectedElement.removeAttributeNS(null, "onmouseout");
+			//selectedElement.removeAttributeNS(null, "onmouseout");
 			selectedElement.removeAttributeNS(null, "onmouseup");
 		}
 			if(index>=0) {
@@ -67,8 +67,8 @@ function deselectElement(evt) {
 			}
 		}
 	}
-	if(solution.length<i) { console.log("error"); }
-	else{ console.log(solution); }
+	if(solution.length<i) { console.log("invalid syntax"); }
+	else{ console.log(solution === "{{solution}}" ? "Correct" : "Incorrect"); }
 }
 
 function selectElement(evt) {
@@ -102,7 +102,6 @@ function drawMatches(equation) {
 		  }
 		}
 	}
-	for(i=0;i<5;i++) { console.log(EQUATION[i]); }
 }
 	</script>
 	<style>
