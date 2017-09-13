@@ -12,12 +12,11 @@ math_signs = '=+-'
 
 #COORDINATES = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,200,1],[10,100,0],[0,100,1],[50,50,0],[40,0,1],[60,0,1]]
 
-'''
-To delete
 SIGNS2 = {}
 SIGNS2['='] = [0]*8+[1]*2
 SIGNS2['-'] = [0]*6+[1]+[0]*3
 SIGNS2['+'] = [0]*6+[1]*2+[0]*2
+SIGNS2['0'] = [1]*6+[0]*4
 SIGNS2['1'] = [0]*2+[1]*2+[0]*6
 SIGNS2['2'] = [0,1,1]*2+[1]+[0]*3
 SIGNS2['3'] = [0]+[1]*4+[0,1]+[0]*3
@@ -27,7 +26,6 @@ SIGNS2['6'] = [1,1,0]+[1]*4+[0]*3
 SIGNS2['7'] = [0]+[1]*3+[0]*6
 SIGNS2['8'] = [1]*7+[0]*3
 SIGNS2['9'] = [1]*5+[0,1]+[0]*3
-'''
 
 SIGNS = {}
 SIGNS['=']=[['='],['-'],[]] 
@@ -47,11 +45,8 @@ SIGNS['9']=[['9'],['3','5'],['8'],['0','6']]
 def new_check(e):
     signs = [SIGNS2[i] for i in e]
     for i in range(10):
-        if (e[3]=='=' and ((l=='+' and int(i)+int(j)==int(k))
-                   or (l=='-' and int(i)-int(j)==int(k)))) \
-                   or (l=='=' and ((m=='+' and int(i)==int(j)+int(k)) \
-                   or (e[3]=='-' and int(i)==int(j)-int(k)))) :
-                       return i+l+j+m+k;
+        if (e[3]=='=' and str(eval(e[:3]))==e[4]):
+           return('true')
 
 def check(f_digit, s_digit, t_digit, f_sign, s_sign,  equation):
     '''
@@ -81,7 +76,7 @@ def solve(equation):
             for t_digit in range(4):
                 for f_sign in range(3):
                     for s_sign in range(3):
-                        if f_digit + f_sign + s_digit + s_sign + t_digit == 3:
+                        if f_digit + f_sign + s_digit + s_sign + t_digit == 3 and 2 in [f_digit,s_digit,t_digit,f_sign,s_sign]:
                             result=check(f_digit, s_digit, t_digit, f_sign, s_sign,  equation)
                             if result:
                                 return result
