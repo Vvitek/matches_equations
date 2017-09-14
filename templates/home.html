@@ -1,5 +1,6 @@
 ﻿<html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="static/css/style.css">
 	<script>
 const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
 const SIGNS = {      '0': [1,1,1,1,1,1,0,0,0,0],
@@ -15,6 +16,7 @@ const SIGNS = {      '0': [1,1,1,1,1,1,0,0,0,0],
 		     '-': [0,0,0,0,0,0,1,0,0,0],
 		     '+': [0,0,0,0,0,0,1,1,0,0],
 		     '=': [0,0,0,0,0,0,0,0,1,1]};
+
 var selectedElement = 0;
 var currentX = 0;
 var currentY = 0;
@@ -34,30 +36,33 @@ function deselectElement(evt) {
 		var position = Math.floor(evt.clientX/130);
 		var index = -1;
 		var smallest = 80;
-		var limits =(position%2===0 ? [0,8]:[7,10]);
-		console.log(limits);
+		var limits =(position%2===0 ? [0,7]:(Math.floor(evt.clientX/130)===1 ? [6,8]:[8,10]));
+		//console.log(limits);
 		for(var i=limits[0];i<limits[1];i++) {
 			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest && EQUATION[position][i]===0) { 
 				index = i;
 				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
 				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-			} else if(selectedElement.getAttribute("x")%130 == coordinates[i][0] && selectedElement.getAttribute("y")%130 == coordinates[i][1]) {
-			EQUATION[Math.floor(selectedElement.getAttribute("x")/130)][i] = 0;
-		}
-			selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-			selectedElement.removeAttributeNS(null, "onmousemove");
-			//selectedElement.removeAttributeNS(null, "onmouseout");
-			selectedElement.removeAttributeNS(null, "onmouseup");
-		}
-			if(index>=0) {
-				EQUATION[Math.floor(evt.clientX/130)][index]=1;
-				selectedElement.setAttribute("x", coordinates[index][0] + 130 * Math.floor(evt.clientX/130));
-				selectedElement.setAttribute("y", coordinates[index][1]);
-				selectedElement.setAttribute("class", "match");
-				selectedElement.setAttribute("width", coordinates[index][2] ? 100 : 10);
-				selectedElement.setAttribute("height", coordinates[index][2] ? 10 : 100);
 			}
-			selectedElement = 0;
+		}
+		
+		selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
+		selectedElement.removeAttributeNS(null, "onmousemove");
+		//selectedElement.removeAttributeNS(null, "onmouseout");
+		selectedElement.removeAttributeNS(null, "onmouseup");
+
+		if(index>=0) {
+			var i=0;
+			while(selectedElement.getAttribute("x")%130 != coordinates[i][0] || selectedElement.getAttribute("y")%130 != coordinates[i][1]) { i++; }
+			EQUATION[Math.floor(selectedElement.getAttribute("x")/130)][i] = 0;
+			EQUATION[position][index]=1;
+			selectedElement.setAttribute("x", coordinates[index][0] + 130 * position);
+			selectedElement.setAttribute("y", coordinates[index][1]);
+			selectedElement.setAttribute("class", "match");
+			selectedElement.setAttribute("width", coordinates[index][2] ? 100 : 10);
+			selectedElement.setAttribute("height", coordinates[index][2] ? 10 : 100);
+		}
+		selectedElement = 0;
 	}
 	for(var i=0;i<5;i++) {
 		for(var j in SIGNS) {
@@ -67,6 +72,7 @@ function deselectElement(evt) {
 			}
 		}
 	}
+	//console.log(solution + " = " + "{{solution}}");
 	if(solution.length<i) { console.log("invalid syntax"); }
 	else{ console.log(solution === "{{solution}}" ? "Correct" : "Incorrect"); }
 }
@@ -104,22 +110,15 @@ function drawMatches(equation) {
 	}
 }
 	</script>
-	<style>
-	.match {
-	fill: rgb(204,153,0);
-	stroke-width: 1;
-	stroke: rgb(0,0,0);
-	}
-	</style>
 	</head>
 	<body>
-		<p> Equation to solve {{equation}} </p>
-		<form action="/home", method = "post">
+		<h2> Equation to solve </h2>
+		<!--<form action="/home", method = "post">
 			Your solution<br>
 			<input type="text" name="solution" value={{equation}}>
 			<br><br>
 			<input type="submit" value="Submit">
-		</form>
+		</form>-->
 		<svg id="field" width="1200" height="450"></svg>
 		<script>
 drawMatches('{{equation}}');

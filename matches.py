@@ -43,7 +43,7 @@ SIGNS['8']=[['8'],['0','6','9'],[],[]]
 SIGNS['9']=[['9'],['3','5'],['8'],['0','6']]
     
 def new_check(e):
-    signs = [SIGNS2[i] for i in e]
+#    signs = [SIGNS2[i] for i in e]
     for i in range(10):
         if (e[3]=='=' and str(eval(e[:3]))==e[4]):
            return('true')

@@ -4,7 +4,7 @@ from matches import check, solve, ALL_EQUATIONS#, COORDINATES, SIGNS2
 app = Flask(__name__)
 app.secret_key = "Strong enough"
 
-@app.route('/home', methods = ['POST', 'GET'])
+@app.route('/', methods = ['POST', 'GET'])
 
 def show_page():
     if request.method == 'POST':

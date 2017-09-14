@@ -1,0 +1,10 @@
+h2{
+	text-align: center;
+	font: 3vw arial;
+}
+
+.match {
+	fill: rgb(204,153,0);
+	stroke-width: 1;
+	stroke: rgb(0,0,0);
+	}
