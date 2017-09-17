@@ -72,9 +72,9 @@ function deselectElement(evt) {
 			}
 		}
 	}
-	//console.log(solution + " = " + "{{solution}}");
+	//console.log(solution + " = " + "{{ solution|tojson }}");
 	if(solution.length<i) { console.log("invalid syntax"); }
-	else{ console.log(solution === "{{solution}}" ? "Correct" : "Incorrect"); }
+	else{ console.log(JSON.parse('{{ solution|tojson }}').solution.includes(solution) ? "Correct" : "Incorrect"); }
 }
 
 function selectElement(evt) {

@@ -33,7 +33,7 @@ SIGNS['=']=[['='],['-'],[],[]]
 SIGNS['-']=[['-'],[],['+','='],[]]
 SIGNS['+']=[['+'],['-'],[],[]]
 SIGNS['0']=[['0'],[],['8'],['6','9']]
-SIGNS['1']=[['1'],[],['7']]
+SIGNS['1']=[['1'],[],['7'],[]]
 SIGNS['2']=[['2'],[],[],['3']]
 SIGNS['3']=[['3'],[],['9'],['2','5'],]
 SIGNS['4']=[['4'],[],[],[]]
@@ -43,55 +43,13 @@ SIGNS['7']=[['7'],['1'],[],[]]
 SIGNS['8']=[['8'],['0','6','9'],[],[]]
 SIGNS['9']=[['9'],['3','5'],['8'],['0','6']]
     
-def new_check(e):
-#    signs = [SIGNS2[i] for i in e]
-    for i in range(10):
-        if (e[3]=='=' and str(eval(e[:3]))==e[4]):
-           return('true')
-
-def check(f_digit, s_digit, t_digit, f_sign, s_sign,  equation):
-    '''
-    Check if current equation is correct
-    '''
-    try:
-        for i in SIGNS[equation[0]][f_digit]:
-            for j in SIGNS[equation[2]][s_digit]:
-                for k in SIGNS[equation[4]][t_digit]:
-                    for l in SIGNS[equation[1]][f_sign]:
-                        for m in SIGNS[equation[3]][s_sign]:
-                            if (m=='=' and ((l=='+' and int(i)+int(j)==int(k))
-                                        or (l=='-' and int(i)-int(j)==int(k)))) \
-                                        or (l=='=' and ((m=='+' and int(i)==int(j)+int(k)) \
-                                        or (m=='-' and int(i)==int(j)-int(k)))) :
-                                return i+l+j+m+k;
-    except:
-        return 0;
-
-
 def solve(equation):
-    '''
-    Iterating throught all possibilities (brute force)
-    '''
-    for f_digit in range(4):
-        for s_digit in range(4):
-            for t_digit in range(4):
-                for f_sign in range(3):
-                    for s_sign in range(3):
-                        if f_digit + f_sign + s_digit + s_sign + t_digit == 3 and 2 in [f_digit,s_digit,t_digit,f_sign,s_sign]:
-                            result=check(f_digit, s_digit, t_digit, f_sign, s_sign,  equation)
-                            if result:
-                                return result
-        
-    return 0;
-
-def solve2(equation):
     solution = []
     for j in set(permutations((0,0,0,1,2))) | set(permutations((0,0,0,0,3))):
         for k in product(*(SIGNS[equation[i]][j[i]] for i in range(5))):
             if(k.count("=")==1 and eval(''.join(k).replace('=','=='))):
                 solution.append(''.join(k))
-    return solution
+    return {'solution': solution} if solution else {} 
 
 
 ALL_EQUATIONS = [''.join(i) for i in product(digits,["+","-"],digits,["="],digits) if solve(''.join(i))]
-
