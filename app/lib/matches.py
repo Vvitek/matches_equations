@@ -6,7 +6,7 @@ extra match and finally 4th value for changing position of a single match.
 '''
 from random import choice
 from string import digits
-from itertools import product
+from itertools import product, permutations
 
 math_signs = '=+-'
 
@@ -28,9 +28,10 @@ SIGNS2['8'] = [1]*7+[0]*3
 SIGNS2['9'] = [1]*5+[0,1]+[0]*3
 
 SIGNS = {}
-SIGNS['=']=[['='],['-'],[]] 
-SIGNS['-']=[['-'],[],['+','=']]
-SIGNS['+']=[['+'],['-'],[]]
+SIGNS['==']=[['=='],['-'],[],[]] 
+SIGNS['=']=[['='],['-'],[],[]] 
+SIGNS['-']=[['-'],[],['+','='],[]]
+SIGNS['+']=[['+'],['-'],[],[]]
 SIGNS['0']=[['0'],[],['8'],['6','9']]
 SIGNS['1']=[['1'],[],['7']]
 SIGNS['2']=[['2'],[],[],['3']]
@@ -83,7 +84,14 @@ def solve(equation):
         
     return 0;
 
+def solve2(equation):
+    solution = []
+    for j in set(permutations((0,0,0,1,2))) | set(permutations((0,0,0,0,3))):
+        for k in product(*(SIGNS[equation[i]][j[i]] for i in range(5))):
+            if(k.count("=")==1 and eval(''.join(k).replace('=','=='))):
+                solution.append(''.join(k))
+    return solution
+
+
 ALL_EQUATIONS = [''.join(i) for i in product(digits,["+","-"],digits,["="],digits) if solve(''.join(i))]
 
-if __name__ == '__main__':
-    generate_equations()
