@@ -1,13 +1,20 @@
 ﻿<html>
 	<head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="static/css/style.css">
 		<script src="static/js/view_mechanism.js"></script>
 	</head>
 	<body>
-		<h2> Equation to solve </h2>
-		<svg id="field" width="1200" height="450"></svg>
-		<script>
+		<div class="container">
+			<div class="jumbotron text-center">
+				<h1>Playing with matches equations</h1>
+			</div>
+			Have you ever seen equations on matchbox equation? It was great fun for me when I was young. The rule is very simple you need to make equation valid by moving single match from equation displayed on matchbox. Don't hestitate to resolve equation below.
+			<h2> Equation to solve </h2>
+			<svg id="field" width="1200" height="250"></svg>
+			<button id="equation-button" type="button" class="btn btn-primary btn-block" onclick=drawMatches('{{equation}}')>Give me solution to resolve</button>
+		<!--<script>
 drawMatches('{{equation}}');
-		</script>
+		</script>-->
 	</body>
 </html>

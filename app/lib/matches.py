@@ -47,9 +47,9 @@ def solve(equation):
     solution = []
     for j in set(permutations((0,0,0,1,2))) | set(permutations((0,0,0,0,3))):
         for k in product(*(SIGNS[equation[i]][j[i]] for i in range(5))):
-            if(k.count("=")==1 and eval(''.join(k).replace('=','=='))):
-                solution.append(''.join(k))
-    return {'solution': solution} if solution else {} 
+            if(k.count("=")==1 and eval("".join(k).replace('=','=='))):
+                solution.append("".join(k))
+    return {"solution": solution} if solution else {} 
 
 
 ALL_EQUATIONS = [''.join(i) for i in product(digits,["+","-"],digits,["="],digits) if solve(''.join(i))]

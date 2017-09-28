@@ -1,3 +1,4 @@
+"use strict";
 const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
 const SIGNS = {      '0': [1,1,1,1,1,1,0,0,0,0],
 		     '1': [0,0,1,1,0,0,0,0,0,0],
@@ -19,15 +20,40 @@ var currentY = 0;
 var currentMatrix = 0;
 var EQUATION = [];
 
+function test() {
+	var solution = "";
+	for(var i=0;i<5;i++) {
+		for(var j in SIGNS) {
+			for(var k=0;k<10;k++) {
+				if(k==9 && EQUATION[i][k] === SIGNS[j][k]) { solution = solution.concat(j); }
+				else if(EQUATION[i][k] !== SIGNS[j][k]) { break; }
+			}
+		}
+	}
+	var form = document.createElement("form");
+	form.setAttribute("method", "post");
+	form.setAttribute("action", "solution");
+	var hiddenField = document.createElement("input");
+	hiddenField.setAttribute("type", "hidden");
+	//hiddenField.setAttribute("name", key);
+	hiddenField.setAttribute("value", solution);
+	form.appendChild(hiddenField);
+	document.body.appendChild(form);
+	form.submit();
+	alert('{{ solution|tojscon }}');
+	if(solution.length<i) { console.log("invalid syntax"); }
+	else{ console.log(JSON.parse('{{ solution|tojson }}').solution.includes(solution) ? "Correct" : "Incorrect"); }
+}
+
 function moveElement(evt) {
+	//"use strict";
 	currentMatrix[4] = evt.clientX - currentX;
 	currentMatrix[5] = evt.clientY - currentY;
-	newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
+	var newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
 	selectedElement.setAttributeNS(null, "transform", newMatrix);
 }
 
 function deselectElement(evt) {
-	var solution = "";
 	if(selectedElement != 0) {
 		var position = Math.floor(evt.clientX/130);
 		var index = -1;
@@ -59,16 +85,6 @@ function deselectElement(evt) {
 		}
 		selectedElement = 0;
 	}
-	for(var i=0;i<5;i++) {
-		for(var j in SIGNS) {
-			for(var k=0;k<10;k++) {
-				if(k==9 && EQUATION[i][k] === SIGNS[j][k]) { solution = solution.concat(j); }
-				else if(EQUATION[i][k] !== SIGNS[j][k]) { break; }
-			}
-		}
-	}
-	if(solution.length<i) { console.log("invalid syntax"); }
-	else{ console.log(JSON.parse('{{ solution|tojson }}').solution.includes(solution) ? "Correct" : "Incorrect"); }
 }
 
 function selectElement(evt) {
@@ -85,7 +101,8 @@ function selectElement(evt) {
 }
 
 function drawMatches(equation) {
-				 
+	document.getElementById('equation-button').innerHTML = "Check your solution";
+	document.getElementById('equation-button').onclick= test;
 	for(var i=0;i<equation.length;i++) {
 		EQUATION.push(SIGNS[equation[i]].slice());
 		for(var j=0;j<10;j++) {

@@ -14,5 +14,13 @@ def show_page():
         session['equation'] = choice(ALL_EQUATIONS)
         return render_template("home.html", equation = session.get('equation'), solution = solve(session.get('equation')))
 
+@app.route('/solution', methods = ['POST'])
+
+def check_solution():
+    return render_template("home.html", equation = session.get('equation'), solution = solve(session.get('equation')))
+
+    #return(solve(session['equation']))
+
+
 if __name__ == "__main__":
     app.run(debug = True)
