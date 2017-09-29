@@ -1,5 +1,5 @@
-"use strict";
-const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
+//"use strict";
+var coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
 const SIGNS = {      '0': [1,1,1,1,1,1,0,0,0,0],
 		     '1': [0,0,1,1,0,0,0,0,0,0],
 		     '2': [0,1,1,0,1,1,1,0,0,0],
@@ -21,6 +21,9 @@ var currentMatrix = 0;
 var EQUATION = [];
 
 function test() {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '/solution');
+	xhr.send(null);
 	var solution = "";
 	for(var i=0;i<5;i++) {
 		for(var j in SIGNS) {
@@ -30,19 +33,21 @@ function test() {
 			}
 		}
 	}
-	var form = document.createElement("form");
-	form.setAttribute("method", "post");
-	form.setAttribute("action", "solution");
-	var hiddenField = document.createElement("input");
-	hiddenField.setAttribute("type", "hidden");
-	//hiddenField.setAttribute("name", key);
-	hiddenField.setAttribute("value", solution);
-	form.appendChild(hiddenField);
-	document.body.appendChild(form);
-	form.submit();
-	alert('{{ solution|tojscon }}');
 	if(solution.length<i) { console.log("invalid syntax"); }
-	else{ console.log(JSON.parse('{{ solution|tojson }}').solution.includes(solution) ? "Correct" : "Incorrect"); }
+	else {
+		var form = document.createElement("form");
+		xhr.onreadystatechange = function () {
+			var DONE = 4;
+			var OK = 200;
+			if (xhr.readyState === DONE) {
+				if (xhr.status === OK) {
+					console.log(JSON.parse(xhr.responseText).solution.includes(solution));
+				} else { console.log('Error' + xhr.status); }
+			}
+		}
+	}
+
+	//else{ console.log(JSON.parse('{{ solution|tojson }}').solution.includes(solution) ? "Correct" : "Incorrect"); }
 }
 
 function moveElement(evt) {
@@ -58,6 +63,7 @@ function deselectElement(evt) {
 		var position = Math.floor(evt.clientX/130);
 		var index = -1;
 		var smallest = 80;
+		console.log(evt.clientX);
 		var limits =(position%2===0 ? [0,7]:(Math.floor(evt.clientX/130)===1 ? [6,8]:[8,10]));
 		for(var i=limits[0];i<limits[1];i++) {
 			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest && EQUATION[position][i]===0) { 
@@ -103,6 +109,7 @@ function selectElement(evt) {
 function drawMatches(equation) {
 	document.getElementById('equation-button').innerHTML = "Check your solution";
 	document.getElementById('equation-button').onclick= test;
+	for (i in coordinates) { i[0]+=document.getElementById('field').getBoundingClientRect().left;}
 	for(var i=0;i<equation.length;i++) {
 		EQUATION.push(SIGNS[equation[i]].slice());
 		for(var j=0;j<10;j++) {
