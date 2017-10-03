@@ -1,5 +1,5 @@
-//"use strict";
-var coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
+"use strict";
+const coordinates = [[0,0,0],[10,0,1],[110,0,0],[110,100,0],[10,190,1],[0,100,0],[10,100,1],[55,55,0],[10,90,1],[10,110,1]];
 const SIGNS = {      '0': [1,1,1,1,1,1,0,0,0,0],
 		     '1': [0,0,1,1,0,0,0,0,0,0],
 		     '2': [0,1,1,0,1,1,1,0,0,0],
@@ -41,13 +41,11 @@ function test() {
 			var OK = 200;
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
-					console.log(JSON.parse(xhr.responseText).solution.includes(solution));
+					alert(JSON.parse(xhr.responseText).solution.includes(solution) ? "Correct!":"Incorrect");
 				} else { console.log('Error' + xhr.status); }
 			}
 		}
 	}
-
-	//else{ console.log(JSON.parse('{{ solution|tojson }}').solution.includes(solution) ? "Correct" : "Incorrect"); }
 }
 
 function moveElement(evt) {
@@ -60,15 +58,16 @@ function moveElement(evt) {
 
 function deselectElement(evt) {
 	if(selectedElement != 0) {
-		var position = Math.floor(evt.clientX/130);
 		var index = -1;
 		var smallest = 80;
-		console.log(evt.clientX);
-		var limits =(position%2===0 ? [0,7]:(Math.floor(evt.clientX/130)===1 ? [6,8]:[8,10]));
+		var X = evt.clientX-document.getElementById('field').getBoundingClientRect().left;
+		var Y = evt.clientY-document.getElementById('field').getBoundingClientRect().top;
+		var position = Math.floor(X/130);
+		var limits =(position%2===0 ? [0,7]:(Math.floor(X/130)===1 ? [6,8]:[8,10]));
 		for(var i=limits[0];i<limits[1];i++) {
-			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150)<smallest && EQUATION[position][i]===0) { 
+			if(Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-X%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-Y)<smallest && EQUATION[position][i]===0) { 
 				index = i;
-				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-evt.clientX%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-evt.clientY+150);
+				smallest = Math.abs(coordinates[i][0]+(coordinates[i][2] ? 50:5)-X%130)+Math.abs(coordinates[i][1]+(coordinates[i][2] ? 5:50)-Y+150);
 				selectedElement.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			}
 		}
@@ -109,7 +108,6 @@ function selectElement(evt) {
 function drawMatches(equation) {
 	document.getElementById('equation-button').innerHTML = "Check your solution";
 	document.getElementById('equation-button').onclick= test;
-	for (i in coordinates) { i[0]+=document.getElementById('field').getBoundingClientRect().left;}
 	for(var i=0;i<equation.length;i++) {
 		EQUATION.push(SIGNS[equation[i]].slice());
 		for(var j=0;j<10;j++) {
