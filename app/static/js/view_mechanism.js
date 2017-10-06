@@ -18,7 +18,7 @@ var selectedElement = 0;
 var currentX = 0;
 var currentY = 0;
 var currentMatrix = 0;
-var EQUATION = [];
+let EQUATION = [];
 
 function test() {
 	var xhr = new XMLHttpRequest();
@@ -26,9 +26,9 @@ function test() {
 	xhr.send(null);
 	var solution = "";
 	for(var i=0;i<5;i++) {
-		for(var j in SIGNS) {
-			for(var k=0;k<10;k++) {
-				if(k==9 && EQUATION[i][k] === SIGNS[j][k]) { solution = solution.concat(j); }
+		for(let j in SIGNS) {
+			for(let k=0;k<10;k++) {
+				if(k==9) {EQUATION[i][k] === SIGNS[j][k] ? solution = solution.concat(j) : console.log('invalid') }
 				else if(EQUATION[i][k] !== SIGNS[j][k]) { break; }
 			}
 		}
@@ -97,7 +97,7 @@ function selectElement(evt) {
 	currentX = evt.clientX;
 	currentY = evt.clientY;
 	currentMatrix = selectedElement.getAttributeNS(null, "transform").slice(7,-1).split(' ');
-	for(var i=0;i<currentMatrix.length;i++){
+	for(let i=0;i<currentMatrix.length;i++){
 		currentMatrix[i] = parseFloat(currentMatrix[i]);
 	}
 	selectedElement.setAttributeNS(null, "onmousemove", "moveElement(evt)");
@@ -110,7 +110,7 @@ function drawMatches(equation) {
 	document.getElementById('equation-button').onclick= test;
 	for(var i=0;i<equation.length;i++) {
 		EQUATION.push(SIGNS[equation[i]].slice());
-		for(var j=0;j<10;j++) {
+		for(let j=0;j<10;j++) {
 		  if(SIGNS[equation[i]][j]) {
 		    var temp = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
 		    temp.setAttribute("class", "match")
