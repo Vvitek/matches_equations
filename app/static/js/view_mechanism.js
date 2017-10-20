@@ -20,10 +20,27 @@ var currentY = 0;
 var currentMatrix = 0;
 let EQUATION = [];
 
-function test() {
+function getEquation() {
+	let xhr = new XMLHttpRequest();
+	xhr.open('GET', '/equation');
+	xhr.send(null);
+	let form = document.createElement("form");
+	xhr.onreadystatechange = function () {
+		let DONE = 4;
+		let OK = 200;
+		if (xhr.readyState === DONE) {
+			if (xhr.status === OK) {
+				drawMatches(xhr.responseText);
+			}
+			else { console.log('Error' + xhr.status); }
+		}
+	}
+}
+
+function check() {
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', '/solution');
-	xhr.send(null);
+	xhr.send('');
 	var solution = "";
 	for(var i=0;i<5;i++) {
 		for(let j in SIGNS) {
@@ -37,11 +54,13 @@ function test() {
 	else {
 		var form = document.createElement("form");
 		xhr.onreadystatechange = function () {
-			var DONE = 4;
-			var OK = 200;
+			let DONE = 4;
+			let OK = 200;
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 					alert(JSON.parse(xhr.responseText).solution.includes(solution) ? "Correct!":"Incorrect");
+					document.getElementById('equation-button').innerHTML = "Wanna try again?";
+					document.getElementById('equation-button').onclick = getEquation;
 				} else { console.log('Error' + xhr.status); }
 			}
 		}
@@ -49,7 +68,6 @@ function test() {
 }
 
 function moveElement(evt) {
-	//"use strict";
 	currentMatrix[4] = evt.clientX - currentX;
 	currentMatrix[5] = evt.clientY - currentY;
 	var newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
@@ -106,8 +124,8 @@ function selectElement(evt) {
 }
 
 function drawMatches(equation) {
-	document.getElementById('equation-button').innerHTML = "Check your solution";
-	document.getElementById('equation-button').onclick= test;
+	let svgField = document.getElementById("field");
+	while(svgField.firstChild) { svgField.removeChild(svgField.firstChild); }
 	for(var i=0;i<equation.length;i++) {
 		EQUATION.push(SIGNS[equation[i]].slice());
 		for(let j=0;j<10;j++) {
@@ -120,8 +138,10 @@ function drawMatches(equation) {
 		    temp.setAttribute("y", coordinates[j][1]);
 		    temp.setAttribute("onmousedown", "selectElement(evt)");
 		    temp.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-		    document.getElementById('field').appendChild(temp);
+		    svgField.appendChild(temp);
 		  }
 		}
-	}
+	}				
+	document.getElementById('equation-button').innerHTML = "Check my solution";
+	document.getElementById('equation-button').onclick = check;
 }
